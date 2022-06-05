@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
-import { Engine } from ".";
-import { BaseSystem } from "./base/BaseSystem";
-import { System, Resource, Component } from "./decorators";
+import { describe, expect, it } from 'vitest';
+import { Engine } from './engine';
+import { BaseSystem } from './base/BaseSystem';
+import { System, Resource, Component } from './decorators';
 
 @Component
 class Player {}
@@ -30,7 +30,7 @@ class SomeSystem extends BaseSystem {
     }
 }
 
-describe("entity system", () => {
+describe('entity system', () => {
     class MyEngine extends Engine {
         constructor() {
             super();
@@ -54,12 +54,12 @@ describe("entity system", () => {
         }
     }
 
-    it("should get resource by Resouce constructor", () => {
+    it('should get resource by Resouce constructor', () => {
         const engine = new MyEngine();
         expect(engine.getResource(SomeResource)).toBeInstanceOf(SomeResource);
     });
 
-    it("should get correct query", () => {
+    it('should get correct query', () => {
         const engine = new MyEngine();
 
         {
@@ -98,7 +98,7 @@ describe("entity system", () => {
         }
     });
 
-    it("should inject resources to system", () => {
+    it('should inject resources to system', () => {
         @System
         class TestSystem {
             run(@Resource(SomeResource) resource: SomeResource) {

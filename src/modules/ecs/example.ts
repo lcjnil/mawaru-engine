@@ -1,6 +1,6 @@
-import { Engine } from ".";
-import { BaseSystem } from "./base/BaseSystem";
-import { System, Resource, Component } from "./decorators";
+import { Engine } from './engine';
+import { BaseSystem } from './base/BaseSystem';
+import { System, Resource, Component } from './decorators';
 
 @Component
 class Player {}

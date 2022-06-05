@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
-export const systemMark = Symbol("system");
-export const componentMark = Symbol("component");
-export const argsMark = Symbol("args");
+export const systemMark = Symbol('system');
+export const componentMark = Symbol('component');
+export const argsMark = Symbol('args');
 
 export interface ResourceLike<T = any> {
     new (...args: any): T;
