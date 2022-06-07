@@ -20,6 +20,10 @@ export abstract class Engine {
         this.resources.set(resource, new resource());
     }
 
+    addResourceInstance(resource: any) {
+        this.resources.set(resource.constructor, resource);
+    }
+
     getResource<T>(resource: ResourceLike<T>): T {
         return this.resources.get(resource);
     }
