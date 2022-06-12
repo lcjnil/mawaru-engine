@@ -9,6 +9,8 @@ onMounted(() => {
     console.error(container.value);
     engine = new MyEngine(container.value!);
 
+    engine.start();
+
     // @ts-expect-error
     window.engine = engine;
 });

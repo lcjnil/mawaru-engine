@@ -45,7 +45,7 @@ worldSpacePosition(x, y)
 
 export class Map {
     // 先虚空来一个
-    static blockSize = 10;
+    static blockSize = 20;
 
     constructor(
         public width: number,

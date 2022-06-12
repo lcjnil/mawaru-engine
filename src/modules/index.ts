@@ -3,7 +3,9 @@ import { Camera } from './resource/camera';
 import { CanvasService } from './resource/canvasService';
 import { Config } from './resource/config';
 import { Map } from './resource/map';
+import { Mouse } from './resource/mouse';
 import { MapRenderer } from './system/mapRenderer';
+import { MoveCamera } from './system/moveCanvas';
 
 export class MyEngine extends Engine {
     constructor(public container: HTMLElement) {
@@ -14,6 +16,7 @@ export class MyEngine extends Engine {
         this.initCanvas();
 
         this.addSystem(MapRenderer);
+        this.addSystem(MoveCamera);
     }
 
     initConfig() {
@@ -23,7 +26,7 @@ export class MyEngine extends Engine {
     }
 
     initMap() {
-        const map = new Map(10, 10, this.genMap(100));
+        const map = new Map(25, 25, this.genMap(25 * 25));
         this.addResourceInstance(map);
     }
 
@@ -37,25 +40,50 @@ export class MyEngine extends Engine {
         const canvasService = new CanvasService(2);
         this.addResourceInstance(canvasService);
 
-        const canvas = document.createElement('canvas');
-        canvas.width = 100 * 2;
-        canvas.height = 100 * 2;
-        canvas.style.width = '500px';
-        canvas.style.height = '500px';
+        const createCanvas = (name: string, width: number, height: number) => {
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            canvas.style.imageRendering = 'pixelated';
 
-        this.container.appendChild(canvas);
-        canvasService.addLayer('map', canvas);
+            this.container.appendChild(canvas);
+            canvasService.addLayer(name, canvas);
+
+            return canvas;
+        };
+
+        const FULL_WIDTH = 500;
+        const FULL_HEIGHT = 500;
+
+        const CAMERA_WIDTH = 200;
+        const CAMERA_HEIGHT = 200;
+
+        const mapCanvas = createCanvas('map', FULL_WIDTH, FULL_HEIGHT);
+        const cameraCanvas = createCanvas(
+            'camera',
+            CAMERA_WIDTH,
+            CAMERA_HEIGHT
+        );
 
         const camera = new Camera({
-            x: 0,
-            y: 0,
-            width: canvas.width,
-            height: canvas.height,
+            x: CAMERA_WIDTH / 2,
+            y: CAMERA_HEIGHT / 2,
+            width: CAMERA_WIDTH,
+            height: CAMERA_HEIGHT,
         });
+
         this.addResourceInstance(camera);
+
+        const mouse = new Mouse();
+        mouse.bindEvents(mapCanvas);
+
+        this.addResourceInstance(mouse);
     }
 
     tick() {
-        // do nothing
+        const canvasService = this.getResource(CanvasService);
+        for (const layer of canvasService.layers.values()) {
+            layer.clearRect(0, 0, layer.canvas.width, layer.canvas.height);
+        }
     }
 }

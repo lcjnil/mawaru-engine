@@ -120,15 +120,14 @@ export abstract class Engine {
     abstract tick(): void;
 
     start() {
-        this.tickSystems();
-
+        this.doTick();
         requestAnimationFrame(() => {
-            this.doTick();
+            this.start();
         });
     }
 
     doTick() {
-        this.tickSystems();
         this.tick();
+        this.tickSystems();
     }
 }

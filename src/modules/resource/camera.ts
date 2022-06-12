@@ -40,9 +40,9 @@ export class Camera {
     }
 
     getScreenSpaceFromWorldSpace(Wx: number, Wy: number) {
-        return {
-            x: this.width / 2 - (this.x - Wx),
-            y: this.height / 2 - (this.y - Wy),
-        };
+        return [
+            this.width / 2 - (this.x - Wx),
+            this.height / 2 - (this.y - Wy),
+        ];
     }
 }
