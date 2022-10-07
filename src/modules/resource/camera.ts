@@ -1,48 +1,27 @@
 export class Camera {
-    /**
-     * 摄像机的 x 世界坐标
-     */
-    x: number;
-    /**
-     * 摄像机的 y 世界坐标
-     */
-    y: number;
+    offset = 0;
 
-    /**
-     * 摄像机的宽度
-     */
-    width: number;
-    /**
-     * 摄像机的高度
-     */
-    height: number;
+    async moveDelta(offset: number, duration?: number) {
+        if (!duration) {
+            this.offset = offset;
+            return;
+        }
 
-    constructor({
-        x,
-        y,
-        width,
-        height,
-    }: {
-        x: number;
-        y: number;
-        width: number;
-        height: number;
-    }) {
-        this.x = x;
-        this.y = y;
-        this.height = height;
-        this.width = width;
-    }
+        return new Promise<void>((resolve) => {
+            // TODO: global tick
+            const now = Date.now();
+            const startOffset = this.offset;
+            const tick = () => {
+                const p = Math.min((Date.now() - now) / duration, 1);
+                this.offset = startOffset + offset * p;
+                if (p < 1) {
+                    window.requestAnimationFrame(tick);
+                } else {
+                    resolve();
+                }
+            };
 
-    moveCamera(x: number, y: number) {
-        this.x = x;
-        this.y = y;
-    }
-
-    getScreenSpaceFromWorldSpace(Wx: number, Wy: number) {
-        return [
-            this.width / 2 - (this.x - Wx),
-            this.height / 2 - (this.y - Wy),
-        ];
+            window.requestAnimationFrame(tick);
+        });
     }
 }

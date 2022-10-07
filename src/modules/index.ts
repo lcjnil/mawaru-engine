@@ -2,81 +2,59 @@ import { Engine } from './ecs';
 import { Camera } from './resource/camera';
 import { CanvasService } from './resource/canvasService';
 import { Config } from './resource/config';
-import { Map } from './resource/map';
+import { Block } from './resource/block';
+import { BlockRenderer } from './system/blockRenderer';
 import { Mouse } from './resource/mouse';
-import { MapRenderer } from './system/mapRenderer';
-import { MoveCamera } from './system/moveCanvas';
+import { BlockClicker } from './system/blockClicker';
+import { State } from './resource/state';
+import { HudRenderer } from './system/hudRenderer';
 
-export class MyEngine extends Engine {
+// TODO: add restart
+export class WhiteBlockEngine extends Engine {
     constructor(public container: HTMLElement) {
         super();
 
         this.initConfig();
-        this.initMap();
+        this.initBlocks();
         this.initCanvas();
 
-        this.addSystem(MapRenderer);
-        this.addSystem(MoveCamera);
+        this.addSystem(BlockRenderer);
+        this.addSystem(HudRenderer);
+        this.addSystem(BlockClicker);
     }
 
     initConfig() {
         const config = new Config();
         config.enableDebug = true;
+
         this.addResourceInstance(config);
+        this.addResource(State);
     }
 
-    initMap() {
-        const map = new Map(25, 25, this.genMap(25 * 25));
-        this.addResourceInstance(map);
-    }
+    initBlocks() {
+        const block = new Block();
+        block.generateBlockIndex();
 
-    private genMap(count: number) {
-        return [...new Array(count)].map((_, index) => ({
-            type: index.toString(),
-        }));
+        this.addResourceInstance(block);
     }
 
     initCanvas() {
-        const canvasService = new CanvasService(2);
+        this.addResource(Camera);
+
+        const canvasService = new CanvasService();
         this.addResourceInstance(canvasService);
 
-        const createCanvas = (name: string, width: number, height: number) => {
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            canvas.style.imageRendering = 'pixelated';
-
-            this.container.appendChild(canvas);
-            canvasService.addLayer(name, canvas);
-
-            return canvas;
-        };
-
-        const FULL_WIDTH = 500;
-        const FULL_HEIGHT = 500;
-
-        const CAMERA_WIDTH = 200;
-        const CAMERA_HEIGHT = 200;
-
-        const mapCanvas = createCanvas('map', FULL_WIDTH, FULL_HEIGHT);
-        const cameraCanvas = createCanvas(
-            'camera',
-            CAMERA_WIDTH,
-            CAMERA_HEIGHT
-        );
-
-        const camera = new Camera({
-            x: CAMERA_WIDTH / 2,
-            y: CAMERA_HEIGHT / 2,
-            width: CAMERA_WIDTH,
-            height: CAMERA_HEIGHT,
+        const block = this.getResource(Block);
+        const canvas = canvasService.createCanvas({
+            name: 'map',
+            width: block.lane * block.blockWidth,
+            height: block.blockHeight * block.verticalCount,
+            container: this.container,
+            isDefault: true,
         });
 
-        this.addResourceInstance(camera);
-
         const mouse = new Mouse();
-        mouse.bindEvents(mapCanvas);
-
+        mouse.bindEvents(canvas);
         this.addResourceInstance(mouse);
     }
 

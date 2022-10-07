@@ -16,6 +16,8 @@ export abstract class Engine {
     private systems: SystemLike[] = [];
     private entities: ComponentGroup[] = [];
 
+    private running = false;
+
     addResource(resource: ResourceLike) {
         this.resources.set(resource, new resource());
     }
@@ -120,6 +122,14 @@ export abstract class Engine {
     abstract tick(): void;
 
     start() {
+        this.running = true;
+        this.loop();
+    }
+
+    loop() {
+        if (!this.running) {
+            return;
+        }
         this.doTick();
         requestAnimationFrame(() => {
             this.start();
@@ -129,5 +139,9 @@ export abstract class Engine {
     doTick() {
         this.tick();
         this.tickSystems();
+    }
+
+    stop() {
+        this.running = false;
     }
 }
