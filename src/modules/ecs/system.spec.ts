@@ -37,12 +37,12 @@ describe('entity system', () => {
             this.addResource(SomeResource);
             this.addSystem(SomeSystem);
 
-            this.addComponent(
+            this.addEntity(
                 new Player(),
                 new Health(100, 100),
                 new Position(0, 0)
             );
-            this.addComponent(
+            this.addEntity(
                 new Monster(),
                 new Health(20, 20),
                 new Position(0, 0)
@@ -63,7 +63,7 @@ describe('entity system', () => {
         const engine = new MyEngine();
 
         {
-            const result = engine.queryComponent(Player);
+            const result = engine.queryEntity(Player);
 
             expect(result).toBeInstanceOf(Array);
             expect(result).toHaveLength(1);
@@ -73,7 +73,7 @@ describe('entity system', () => {
         }
 
         {
-            const result = engine.queryComponent(Player, Health);
+            const result = engine.queryEntity(Player, Health);
 
             expect(result).toBeInstanceOf(Array);
             expect(result).toHaveLength(1);
@@ -84,7 +84,7 @@ describe('entity system', () => {
         }
 
         {
-            const result = engine.queryComponent(Health, Position);
+            const result = engine.queryEntity(Health, Position);
 
             expect(result).toBeInstanceOf(Array);
             expect(result).toHaveLength(2);

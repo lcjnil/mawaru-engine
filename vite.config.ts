@@ -11,4 +11,9 @@ export default defineConfig({
             '@': fileURLToPath(new URL('./src', import.meta.url)),
         },
     },
+    server: {
+        hmr: {
+            port: process.env.IS_LED ? 80 : undefined,
+        },
+    },
 });

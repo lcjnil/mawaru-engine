@@ -2,25 +2,36 @@ import { Engine } from './ecs';
 import { Camera } from './resource/camera';
 import { CanvasService } from './resource/canvasService';
 import { Config } from './resource/config';
-import { Block } from './resource/block';
-import { BlockRenderer } from './system/blockRenderer';
-import { Mouse } from './resource/mouse';
-import { BlockClicker } from './system/blockClicker';
 import { State } from './resource/state';
-import { HudRenderer } from './system/hudRenderer';
+import { MapRenderSystem } from './system/mapRenderSystem';
+import { Ball } from './component/ball';
+import { Position } from './component/position';
+import { Throwable } from './component/Throwable';
+import { Mouse } from './resource/mouse';
 
 // TODO: add restart
-export class WhiteBlockEngine extends Engine {
+export class ThrowBall extends Engine {
     constructor(public container: HTMLElement) {
         super();
 
         this.initConfig();
-        this.initBlocks();
         this.initCanvas();
 
-        this.addSystem(BlockRenderer);
-        this.addSystem(HudRenderer);
-        this.addSystem(BlockClicker);
+        this.addBall();
+
+        import('./system/positionSystem').then(({ PositionSystem }) =>
+            this.addSystem(PositionSystem)
+        );
+        import('./system/cameraSystem').then(({ CameraSystem }) =>
+            this.addSystem(CameraSystem)
+        );
+        this.addSystem(MapRenderSystem);
+        import('./system/ballRenderSystem').then(({ BallRenderSystem }) =>
+            this.addSystem(BallRenderSystem)
+        );
+        import('./system/throwSystem').then(({ ThrowSystem }) =>
+            this.addSystem(ThrowSystem)
+        );
     }
 
     initConfig() {
@@ -31,37 +42,42 @@ export class WhiteBlockEngine extends Engine {
         this.addResource(State);
     }
 
-    initBlocks() {
-        const block = new Block();
-        block.generateBlockIndex();
-
-        this.addResourceInstance(block);
-    }
-
     initCanvas() {
         this.addResource(Camera);
 
         const canvasService = new CanvasService();
         this.addResourceInstance(canvasService);
 
-        const block = this.getResource(Block);
+        const config = this.getResource(Config);
+
         const canvas = canvasService.createCanvas({
             name: 'map',
-            width: block.lane * block.blockWidth,
-            height: block.blockHeight * block.verticalCount,
+            width: config.width,
+            height: config.height,
             container: this.container,
             isDefault: true,
         });
 
         const mouse = new Mouse();
         mouse.bindEvents(canvas);
+
         this.addResourceInstance(mouse);
+    }
+
+    addBall() {
+        const config = this.getResource(Config);
+        this.addEntity(
+            new Ball(),
+            new Position([config.width / 2, 50, 50]),
+            new Throwable()
+        );
     }
 
     tick() {
         const canvasService = this.getResource(CanvasService);
         for (const layer of canvasService.layers.values()) {
-            layer.clearRect(0, 0, layer.canvas.width, layer.canvas.height);
+            layer.fillStyle = '#f1f1f1';
+            layer.fillRect(0, 0, layer.canvas.width, layer.canvas.height);
         }
     }
 }

@@ -9,6 +9,7 @@ import {
     type ComponentLike,
     type ResourceLike,
     type SystemLike,
+    Resource,
 } from './decorators';
 
 export abstract class Engine {
@@ -17,6 +18,10 @@ export abstract class Engine {
     private entities: ComponentGroup[] = [];
 
     private running = false;
+
+    constructor() {
+        this.addResourceInstance(this);
+    }
 
     addResource(resource: ResourceLike) {
         this.resources.set(resource, new resource());
@@ -38,7 +43,7 @@ export abstract class Engine {
         this.systems.push(new system());
     }
 
-    addComponent<T extends any[]>(...args: ComponentGroup<T>) {
+    addEntity<T extends any[]>(...args: ComponentGroup<T>) {
         args.forEach((arg) => {
             const isComponent = Reflect.getMetadata(
                 componentMark,
@@ -52,27 +57,27 @@ export abstract class Engine {
         this.entities.push(args);
     }
 
-    queryComponent<T1>(arg: ComponentLike<T1>): [T1][];
+    queryEntity<T1>(arg: ComponentLike<T1>): [T1][];
 
-    queryComponent<T1, T2>(
+    queryEntity<T1, T2>(
         arg: ComponentLike<T1>,
         arg2: ComponentLike<T2>
     ): [T1, T2][];
 
-    queryComponent<T1, T2, T3>(
+    queryEntity<T1, T2, T3>(
         arg: ComponentLike<T1>,
         arg2: ComponentLike<T2>,
         arg3: ComponentLike<T3>
     ): [T1, T2, T3][];
 
-    queryComponent<T1, T2, T3, T4>(
+    queryEntity<T1, T2, T3, T4>(
         arg: ComponentLike<T1>,
         arg2: ComponentLike<T2>,
         arg3: ComponentLike<T3>,
         arg4: ComponentLike<T4>
     ): [T1, T2, T3, T4][];
 
-    queryComponent(...args: any) {
+    queryEntity(...args: any) {
         const result: any[][] = [];
 
         for (const entity of this.entities) {

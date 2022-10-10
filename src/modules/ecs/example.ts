@@ -40,27 +40,19 @@ class MyEngine extends Engine {
         this.addResource(SomeResource);
         this.addSystem(SomeSystem);
 
-        this.addComponent(
-            new Player(),
-            new Health(100, 100),
-            new Position(0, 0)
-        );
-        this.addComponent(
-            new Monster(),
-            new Health(20, 20),
-            new Position(0, 0)
-        );
+        this.addEntity(new Player(), new Health(100, 100), new Position(0, 0));
+        this.addEntity(new Monster(), new Health(20, 20), new Position(0, 0));
 
-        const result = this.queryComponent(Player);
+        const result = this.queryEntity(Player);
         console.error(result);
 
-        const result2 = this.queryComponent(Player, Health);
+        const result2 = this.queryEntity(Player, Health);
         console.error(result2);
 
-        const result3 = this.queryComponent(Monster, Health, Position);
+        const result3 = this.queryEntity(Monster, Health, Position);
         console.error(result3);
 
-        const result4 = this.queryComponent(Health, Position);
+        const result4 = this.queryEntity(Health, Position);
         console.error(result4);
     }
 
