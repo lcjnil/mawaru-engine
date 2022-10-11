@@ -61,14 +61,8 @@ export class PositionSystem {
             position[i] = position[i] + velocity[i] * dt;
 
             if (i === 0) {
-                const offset = Math.abs(position[i] - config.width / 2);
-                if (offset > config.width / 4) {
-                    acceleration[i] *= 1.08;
-                }
-
-                if (velocity[i] <= 0) {
-                    acceleration[i] = 0;
-                    velocity[i] = 0;
+                if (position[i] < 0 || position[i] > config.width) {
+                    positionComponent.startTime = 0;
                 }
             }
 

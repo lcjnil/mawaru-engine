@@ -13,6 +13,7 @@ export class ThrowSystem {
     isDragging = false;
     startTime = 0;
     draggingPosition = [0, 0];
+    lastPosition = [0, 0];
 
     run(
         @Resource(ThrowBall) engine: ThrowBall,
@@ -38,22 +39,24 @@ export class ThrowSystem {
             this.isDragging = false;
 
             const dragOffset = [
-                this.draggingPosition[0] - x,
-                this.draggingPosition[1] - y,
+                this.draggingPosition[0] - this.lastPosition[0],
+                this.draggingPosition[1] - this.lastPosition[1],
             ];
+
+            console.error(this.lastPosition, this.draggingPosition, dragOffset);
             const dragDuration = (Date.now() - this.startTime) / 1000;
-            const xRatio = 12;
+            const xRatio = 6;
             const yRatio = 3;
 
             // TODO: 呜呜呜这里需要调参
             positionComponent.move(
                 [
-                    -dragOffset[0] / 8 / dragDuration / xRatio,
+                    Math.abs(dragOffset[0]) / 8 / dragDuration / xRatio,
                     -dragOffset[1] / 8 / dragDuration / yRatio,
                     0,
                 ],
                 [
-                    dragOffset[0] / dragDuration / xRatio,
+                    -dragOffset[0] / dragDuration / xRatio,
                     dragOffset[1] / dragDuration / yRatio,
                     0,
                 ]
@@ -63,6 +66,7 @@ export class ThrowSystem {
         }
 
         if (this.isDragging) {
+            this.lastPosition = [x, y];
             return;
         }
 
