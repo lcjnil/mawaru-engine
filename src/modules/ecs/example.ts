@@ -43,16 +43,16 @@ class MyEngine extends Engine {
         this.addEntity(new Player(), new Health(100, 100), new Position(0, 0));
         this.addEntity(new Monster(), new Health(20, 20), new Position(0, 0));
 
-        const result = this.queryEntity(Player);
+        const result = this.queryEntities(Player);
         console.error(result);
 
-        const result2 = this.queryEntity(Player, Health);
+        const result2 = this.queryEntities(Player, Health);
         console.error(result2);
 
-        const result3 = this.queryEntity(Monster, Health, Position);
+        const result3 = this.queryEntities(Monster, Health, Position);
         console.error(result3);
 
-        const result4 = this.queryEntity(Health, Position);
+        const result4 = this.queryEntities(Health, Position);
         console.error(result4);
     }
 

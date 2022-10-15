@@ -1,12 +1,8 @@
-import { Engine } from './ecs';
+import { Engine } from '../ecs';
 import { Camera } from './resource/camera';
 import { CanvasService } from './resource/canvasService';
 import { Config } from './resource/config';
 import { State } from './resource/state';
-import { MapRenderSystem } from './system/mapRenderSystem';
-import { Ball } from './component/ball';
-import { Position } from './component/position';
-import { Throwable } from './component/Throwable';
 import { Mouse } from './resource/mouse';
 
 // TODO: add restart
@@ -16,22 +12,6 @@ export class ThrowBall extends Engine {
 
         this.initConfig();
         this.initCanvas();
-
-        this.addBall();
-
-        import('./system/positionSystem').then(({ PositionSystem }) =>
-            this.addSystem(PositionSystem)
-        );
-        import('./system/cameraSystem').then(({ CameraSystem }) =>
-            this.addSystem(CameraSystem)
-        );
-        this.addSystem(MapRenderSystem);
-        import('./system/ballRenderSystem').then(({ BallRenderSystem }) =>
-            this.addSystem(BallRenderSystem)
-        );
-        import('./system/throwSystem').then(({ ThrowSystem }) =>
-            this.addSystem(ThrowSystem)
-        );
     }
 
     initConfig() {
@@ -62,15 +42,6 @@ export class ThrowBall extends Engine {
         mouse.bindEvents(canvas);
 
         this.addResourceInstance(mouse);
-    }
-
-    addBall() {
-        const config = this.getResource(Config);
-        this.addEntity(
-            new Ball(),
-            new Position([config.width / 2, 50, 50]),
-            new Throwable()
-        );
     }
 
     tick() {

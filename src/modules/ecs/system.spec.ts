@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { Engine } from './engine';
 import { BaseSystem } from './base/BaseSystem';
 import { System, Resource, Component } from './decorators';
+import { Entity } from './base/entity';
 
 @Component
 class Player {}
@@ -38,14 +39,18 @@ describe('entity system', () => {
             this.addSystem(SomeSystem);
 
             this.addEntity(
-                new Player(),
-                new Health(100, 100),
-                new Position(0, 0)
+                new Entity(
+                    new Player(),
+                    new Health(100, 100),
+                    new Position(0, 0)
+                )
             );
             this.addEntity(
-                new Monster(),
-                new Health(20, 20),
-                new Position(0, 0)
+                new Entity(
+                    new Monster(),
+                    new Health(20, 20),
+                    new Position(0, 0)
+                )
             );
         }
 
@@ -63,42 +68,39 @@ describe('entity system', () => {
         const engine = new MyEngine();
 
         {
-            const result = engine.queryEntity(Player);
+            const result = engine.queryEntities(Player);
 
             expect(result).toBeInstanceOf(Array);
             expect(result).toHaveLength(1);
-            expect(result[0]).toBeInstanceOf(Array);
-            expect(result[0]).toHaveLength(1);
-            expect(result[0][0]).toBeInstanceOf(Player);
+            expect(result[0]).toBeInstanceOf(Entity);
+            expect(result[0].getComponent(Player)).toBeInstanceOf(Player);
         }
 
         {
-            const result = engine.queryEntity(Player, Health);
+            const result = engine.queryEntities(Player, Health);
 
             expect(result).toBeInstanceOf(Array);
             expect(result).toHaveLength(1);
-            expect(result[0]).toBeInstanceOf(Array);
-            expect(result[0]).toHaveLength(2);
-            expect(result[0][0]).toBeInstanceOf(Player);
-            expect(result[0][1]).toBeInstanceOf(Health);
+            expect(result[0]).toBeInstanceOf(Entity);
+            expect(result[0].getComponent(Player)).toBeInstanceOf(Player);
+            expect(result[0].getComponent(Health)).toBeInstanceOf(Health);
         }
 
         {
-            const result = engine.queryEntity(Health, Position);
+            const result = engine.queryEntities(Health, Position);
 
             expect(result).toBeInstanceOf(Array);
             expect(result).toHaveLength(2);
-            expect(result[0]).toBeInstanceOf(Array);
-            expect(result[0]).toHaveLength(2);
-            expect(result[0][0]).toBeInstanceOf(Health);
-            expect(result[0][1]).toBeInstanceOf(Position);
+            expect(result[0]).toBeInstanceOf(Entity);
+            expect(result[0].getComponent(Health)).toBeInstanceOf(Health);
+            expect(result[0].getComponent(Position)).toBeInstanceOf(Position);
 
-            expect(result[1][0]).toBeInstanceOf(Health);
-            expect(result[1][1]).toBeInstanceOf(Position);
+            expect(result[1].getComponent(Health)).toBeInstanceOf(Health);
+            expect(result[1].getComponent(Position)).toBeInstanceOf(Position);
         }
     });
 
-    it('should inject resources to system', () => {
+    it('should inject resource to system', () => {
         @System
         class TestSystem {
             run(@Resource(SomeResource) resource: SomeResource) {

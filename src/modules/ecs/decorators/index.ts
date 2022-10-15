@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
+import type { Engine } from '../engine';
+
 export const systemMark = Symbol('system');
 export const componentMark = Symbol('component');
 export const argsMark = Symbol('args');
@@ -21,7 +23,7 @@ export type ComponentGroup<T extends any[] = any[]> = T;
  * 标记一个 class 是否是 System
  * @param constructor System
  */
-export function System(constructor: { new (...args: any): SystemLike }) {
+export function System(constructor: { new (engine: Engine): SystemLike }) {
     Reflect.defineMetadata(systemMark, true, constructor);
 }
 
