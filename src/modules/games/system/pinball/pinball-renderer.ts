@@ -1,8 +1,9 @@
 import { Engine, Resource, System } from '../../../ecs';
 import { CanvasService } from '../../resource/canvasService';
-import { PinballConfig } from '../../resource/pinball/PinballConfig';
+import { PinballConfig } from '../../resource/pinball/pinballConfig';
 import { Position } from '../../component/pinball/position';
 import { Pinball } from '../../component/pinball/pinball';
+import { Delay } from '../../resource/pinball/delay';
 
 @System
 export class PinballRenderer {
@@ -17,6 +18,12 @@ export class PinballRenderer {
 
         for (const ball of pinball) {
             const position = ball.getComponentOrThrow(Position);
+            const isDelayed = ball.hasComponent(Delay);
+
+            if (isDelayed) {
+                continue;
+            }
+
             ctx.fillStyle = 'red';
             ctx.beginPath();
             ctx.arc(

@@ -1,21 +1,13 @@
 <script lang="ts" setup>
-import { ThrowBall } from '../modules/games/pin-ball';
 import { onMounted, ref } from 'vue';
-import { State, PlayState } from '../modules/games/resource/state';
+import { PinBallEngine } from '../modules/games/pin-ball';
 
-let engine: ThrowBall;
-let state = ref<State>();
+let engine: PinBallEngine;
 const container = ref<HTMLDivElement>();
 
-const handleStart = () => {
-    state.value?.start();
-};
-
 onMounted(() => {
-    engine = new ThrowBall(container.value!);
+    engine = new PinBallEngine(container.value!);
     engine.start();
-
-    state.value = engine.getResource(State);
 });
 </script>
 

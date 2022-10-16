@@ -2,7 +2,7 @@ import { Engine, Resource, System } from '../../../ecs';
 import { CanvasService } from '../../resource/canvasService';
 import { Wall } from '../../component/pinball/wall';
 import { Position } from '../../component/pinball/position';
-import { PinballConfig } from '../../resource/pinball/PinballConfig';
+import { PinballConfig } from '../../resource/pinball/pinballConfig';
 
 @System
 export class WallRenderer {
@@ -19,7 +19,9 @@ export class WallRenderer {
             const position = wall.getComponentOrThrow(Position);
 
             ctx.strokeStyle = '#000';
-            ctx.strokeRect(
+            ctx.fillStyle = '#000';
+            ctx.setLineDash([]);
+            ctx.fillRect(
                 position.x + 2,
                 position.y + 2,
                 pinballConfig.blockSize - 4,

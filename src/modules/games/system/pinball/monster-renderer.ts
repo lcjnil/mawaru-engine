@@ -1,7 +1,7 @@
 import { Engine, Resource, System } from '../../../ecs';
 import { CanvasService } from '../../resource/canvasService';
 import { Position } from '../../component/pinball/position';
-import { PinballConfig } from '../../resource/pinball/PinballConfig';
+import { PinballConfig } from '../../resource/pinball/pinballConfig';
 import { Monster } from '../../component/pinball/monster';
 import { Health } from '../../component/pinball/health';
 
@@ -20,6 +20,7 @@ export class MonsterRenderer {
             const position = wall.getComponentOrThrow(Position);
 
             ctx.strokeStyle = 'blue';
+            ctx.setLineDash([]);
             ctx.strokeRect(
                 position.x + 2,
                 position.y + 2,

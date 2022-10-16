@@ -1,16 +1,21 @@
 import { Engine, Resource, System } from '../../../ecs';
-import { PinballConfig } from '../../resource/pinball/PinballConfig';
+import { PinballConfig } from '../../resource/pinball/pinballConfig';
 import { Position } from '../../component/pinball/position';
 import { Speed } from '../../component/pinball/speed';
 import { Obstacle } from '../../component/pinball/obstacle';
 import { Health } from '../../component/pinball/health';
 import { WillDamage } from '../../component/pinball/will-damage';
+import { Delay } from '../../resource/pinball/delay';
+import { Config } from '../../resource/config';
 
 @System
 export class MoveSystem {
     constructor(public engine: Engine) {}
 
-    run(@Resource(PinballConfig) pinballConfig: PinballConfig) {
+    run(
+        @Resource(PinballConfig) pinballConfig: PinballConfig,
+        @Resource(Config) config: Config
+    ) {
         const balls = this.engine.queryEntities(Position, Speed);
         const obstacles = this.engine.queryEntities(Obstacle, Position);
 
@@ -18,6 +23,11 @@ export class MoveSystem {
         for (const ball of balls) {
             const position = ball.getComponentOrThrow(Position);
             const speed = ball.getComponentOrThrow(Speed);
+            const isDelayed = ball.hasComponent(Delay);
+
+            if (isDelayed) {
+                continue;
+            }
 
             const time = this.engine.deltaTickTime / 1000;
             const angle = speed.angle;
@@ -43,6 +53,15 @@ export class MoveSystem {
 
                     break;
                 }
+            }
+
+            if (
+                position.y >=
+                    pinballConfig.shootPosition[1] + pinballConfig.blockSize ||
+                position.x <= 0 ||
+                position.x >= config.width
+            ) {
+                this.engine.removeEntity(ball);
             }
         }
     }

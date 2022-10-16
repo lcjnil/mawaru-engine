@@ -13,6 +13,13 @@ import { Pinball } from '../component/pinball/pinball';
 import { Speed } from '../component/pinball/speed';
 import { PinballRenderer } from '../system/pinball/pinball-renderer';
 import { MoveSystem } from '../system/pinball/move';
+import { Monster } from '../component/pinball/monster';
+import { Health } from '../component/pinball/health';
+import { MonsterRenderer } from '../system/pinball/monster-renderer';
+import { DamageSystem } from '../system/pinball/damage';
+import { LineRenderer } from '../system/pinball/line-renderer';
+import { Line } from '../component/pinball/line';
+import { PinballState } from '../resource/pinball/pinballState';
 
 export default class PinballWall extends Engine {
     constructor(public container: HTMLElement) {
@@ -21,16 +28,21 @@ export default class PinballWall extends Engine {
         this.initConfig();
         this.initCanvas();
 
-        this.initMap();
+        const config = this.getResource(Config);
 
-        this.addSystem(WallRenderer)
-            .addSystem(MoveSystem)
-            .addSystem(PinballRenderer);
+        this.addEntity(
+            new Entity(
+                new Line(Math.PI * 1.5, [config.width / 2, config.height - 100])
+            )
+        );
+
+        this.addSystem(LineRenderer);
     }
 
     initConfig() {
         this.addResource(Config);
         this.addResource(PinballConfig);
+        this.addResource(PinballState);
     }
 
     initCanvas() {
@@ -53,32 +65,6 @@ export default class PinballWall extends Engine {
         mouse.bindEvents(canvas);
 
         this.addResourceInstance(mouse);
-    }
-
-    initMap() {
-        // create walls and obstacles around the map
-
-        for (let x = 0; x < 400; x += 40) {
-            for (let y = 0; y < 400; y += 40) {
-                if (x === 40 || x === 360 || y === 40 || y === 360) {
-                    this.addEntity(
-                        new Entity(
-                            new Wall(),
-                            new Position(x, y),
-                            new Obstacle()
-                        )
-                    );
-                }
-            }
-        }
-
-        this.addEntity(
-            new Entity(
-                new Pinball(),
-                new Position(120, 120),
-                new Speed(Math.PI * 0.3, 100)
-            )
-        );
     }
 
     tick() {

@@ -3,7 +3,7 @@ import { Config } from '../resource/config';
 import { Camera } from '../resource/camera';
 import { CanvasService } from '../resource/canvasService';
 import { Mouse } from '../resource/mouse';
-import { PinballConfig } from '../resource/pinball/PinballConfig';
+import { PinballConfig } from '../resource/pinball/pinballConfig';
 import { WallRenderer } from '../system/pinball/wall-renderer';
 import { Entity } from '../../ecs/base/entity';
 import { Wall } from '../component/pinball/wall';

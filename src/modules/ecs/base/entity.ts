@@ -4,6 +4,10 @@ import { componentMark } from '../decorators';
 export class Entity {
     constructor(...components: any[]) {
         components.forEach((component) => {
+            if (!component) {
+                return;
+            }
+
             const isComponent = Reflect.getMetadata(
                 componentMark,
                 component.constructor
@@ -16,7 +20,7 @@ export class Entity {
             }
         });
 
-        this.components = components;
+        this.components = components.filter((v) => v);
     }
 
     components: any[] = [];
