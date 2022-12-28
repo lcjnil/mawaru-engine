@@ -32,7 +32,10 @@ export default class PinballWall extends Engine {
 
         this.addEntity(
             new Entity(
-                new Line(Math.PI * 1.5, [config.width / 2, config.height - 100])
+                new Line(Math.PI * 1.5, [
+                    config.screenWidth / 2,
+                    config.screenHeight - 100,
+                ])
             )
         );
 
@@ -55,8 +58,8 @@ export default class PinballWall extends Engine {
 
         const canvas = canvasService.createCanvas({
             name: 'map',
-            width: config.width,
-            height: config.height,
+            width: config.screenWidth,
+            height: config.screenHeight,
             container: this.container,
             isDefault: true,
         });

@@ -1,13 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, viewport-fit=cover" />
     <title>Vite App</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+</head>
+<body>
+<div id="app"></div>
+<script>
+    // trap requestAnimationFrame to track usage per second
+    const originalRequestAnimationFrame = window.requestAnimationFrame;
+    let currentFrame = 0;
+    let lastTime = 0;
+
+    window.requestAnimationFrame = function(callback) {
+        currentFrame++;
+        const now = Date.now();
+        if (now - lastTime >= 1000) {
+            console.log('FPS:', currentFrame);
+            currentFrame = 0;
+            lastTime = now;
+        }
+
+        return originalRequestAnimationFrame(callback);
+    };
+
+</script>
+<script type="module" src="/src/main.ts"></script>
+</body>
 </html>

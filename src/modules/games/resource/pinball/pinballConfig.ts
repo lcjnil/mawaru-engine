@@ -1,3 +1,5 @@
+const scaleRatio = 414 / window.innerWidth;
+
 export class PinballConfig {
     /**
      * wall 和 monster 的大小
@@ -5,8 +7,6 @@ export class PinballConfig {
     blockSize = 40;
 
     monsterCount = 10;
-
-    healthRange = [1, 10];
 
     /**
      * 弹珠的半径
@@ -17,5 +17,26 @@ export class PinballConfig {
 
     ballCount = 5;
     speed = 500;
+
+    // acceleration = -400;
+    // minSpeed = 50;
     delay = 50;
+
+    monsterScreenSize = 90 * scaleRatio;
+
+    // 弹球区域的左右边界
+    leftRightScreenPadding = 100 * scaleRatio;
+
+    // 弹球区域的高度
+    areaScreenHeight = 1130 * scaleRatio;
+
+    healthArcRadius = 15 * scaleRatio;
+    healthTextSize = 20 * scaleRatio + 'px';
+
+    /** 水平方向的格子个数 */
+    verticalCount = 7;
+    /** 垂直方向的格子个数 */
+    horizontalCount = 11;
+
+    healthRange = [1, 10] as const;
 }

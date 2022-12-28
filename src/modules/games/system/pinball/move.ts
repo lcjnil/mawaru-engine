@@ -1,12 +1,13 @@
 import { Engine, Resource, System } from '../../../ecs';
 import { PinballConfig } from '../../resource/pinball/pinballConfig';
-import { Position } from '../../component/pinball/position';
 import { Speed } from '../../component/pinball/speed';
 import { Obstacle } from '../../component/pinball/obstacle';
 import { Health } from '../../component/pinball/health';
 import { WillDamage } from '../../component/pinball/will-damage';
 import { Delay } from '../../resource/pinball/delay';
 import { Config } from '../../resource/config';
+import { Rect } from '../../component/pinball/rect';
+import { Position } from '../../component/pinball/position';
 
 @System
 export class MoveSystem {
@@ -17,7 +18,7 @@ export class MoveSystem {
         @Resource(Config) config: Config
     ) {
         const balls = this.engine.queryEntities(Position, Speed);
-        const obstacles = this.engine.queryEntities(Obstacle, Position);
+        const obstacles = this.engine.queryEntities(Obstacle, Rect);
 
         // TODO: 需要处理碰撞
         for (const ball of balls) {
@@ -42,7 +43,7 @@ export class MoveSystem {
                 const isHit = this.isHit(
                     position,
                     speed,
-                    obstacle.getComponentOrThrow(Position),
+                    obstacle.getComponentOrThrow(Rect),
                     pinballConfig
                 );
 
@@ -59,7 +60,7 @@ export class MoveSystem {
                 position.y >=
                     pinballConfig.shootPosition[1] + pinballConfig.blockSize ||
                 position.x <= 0 ||
-                position.x >= config.width
+                position.x >= config.screenWidth
             ) {
                 this.engine.removeEntity(ball);
             }
@@ -69,7 +70,7 @@ export class MoveSystem {
     isHit(
         ball: Position,
         speed: Speed,
-        obstacle: Position,
+        obstacle: Rect,
         pinballConfig: PinballConfig
     ) {
         if (speed.hitComponent === obstacle) {
@@ -79,18 +80,13 @@ export class MoveSystem {
         const ballX = ball.x;
         const ballY = ball.y;
 
-        const obstacleX = obstacle.x + pinballConfig.blockSize / 2;
-        const obstacleY = obstacle.y + pinballConfig.blockSize / 2;
+        const obstacleX = obstacle.x + obstacle.width / 2;
+        const obstacleY = obstacle.y + obstacle.height / 2;
 
         const isHit = isCircleHitRect(
             [ball.x, ball.y],
             pinballConfig.ballRadius,
-            [
-                obstacle.x,
-                obstacle.y,
-                pinballConfig.blockSize,
-                pinballConfig.blockSize,
-            ]
+            [obstacle.x, obstacle.y, obstacle.width, obstacle.height]
         );
 
         if (!isHit) {

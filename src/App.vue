@@ -6,4 +6,9 @@ import { RouterView } from 'vue-router';
     <RouterView />
 </template>
 
-<style></style>
+<style>
+body {
+    margin: 0;
+    touch-action: none;
+}
+</style>

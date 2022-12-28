@@ -1,5 +1,4 @@
 import { Engine, Resource, System } from '../../../ecs';
-import { State } from '../../resource/state';
 import { PinballState } from '../../resource/pinball/pinballState';
 import { Line } from '../../component/pinball/line';
 import { Mouse } from '../../resource/mouse';
@@ -10,7 +9,10 @@ import { Position } from '../../component/pinball/position';
 import { Speed } from '../../component/pinball/speed';
 import { Delay } from '../../resource/pinball/delay';
 import { Monster } from '../../component/pinball/monster';
+import { MonsterSpawnService } from '../../resource/pinball/monsterSpawn';
+import { Rect } from '../../component/pinball/rect';
 
+// TODO: 判断游戏结束
 @System
 export class StageChecker {
     constructor(public engine: Engine) {}
@@ -18,7 +20,8 @@ export class StageChecker {
     run(
         @Resource(PinballState) pinballState: PinballState,
         @Resource(PinballConfig) pinballConfig: PinballConfig,
-        @Resource(Mouse) mouse: Mouse
+        @Resource(Mouse) mouse: Mouse,
+        @Resource(MonsterSpawnService) monsterSpawnService: MonsterSpawnService
     ) {
         // TODO: 根据当前的状态进行状态机流转
         // shoot -> move -> monster -> shoot -> ... -> finish
@@ -53,13 +56,15 @@ export class StageChecker {
                 return;
             }
 
-            const monsters = this.engine.queryEntities(Monster, Position);
-            // TODO: 判断游戏结束
-
+            const monsters = this.engine.queryEntities(Monster, Rect);
             for (const monster of monsters) {
-                const position = monster.getComponentOrThrow(Position);
-                position.y += pinballConfig.blockSize;
+                const rect = monster.getComponentOrThrow(Rect);
+                rect.y += rect.height;
             }
+
+            monsterSpawnService
+                .spawnLineMonster()
+                .forEach((entity) => this.engine.addEntity(entity));
 
             pinballState.state = 'shoot';
         }

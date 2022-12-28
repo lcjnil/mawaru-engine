@@ -2,36 +2,16 @@ export class Mouse {
     x = -1;
     y = -1;
 
-    bindEvents(canvas: HTMLCanvasElement) {
-        canvas.addEventListener('mousedown', (e) => {
-            this.x = e.offsetX;
-            this.y = e.offsetY;
-
-            const onMouseMove = (e: MouseEvent) => {
-                this.x = e.offsetX;
-                this.y = e.offsetY;
-            };
-
-            const onMouseUp = () => {
-                this.x = -1;
-                this.y = -1;
-                canvas.removeEventListener('mousemove', onMouseMove);
-                canvas.removeEventListener('mouseup', onMouseUp);
-            };
-
-            canvas.addEventListener('mousemove', onMouseMove);
-            canvas.addEventListener('mouseup', onMouseUp);
-        });
-
+    bindEvents(canvas: HTMLCanvasElement, scaleRatio = 2) {
         canvas.addEventListener('touchstart', (e) => {
             const touch = e.touches[0];
-            this.x = touch.clientX;
-            this.y = touch.clientY;
+            this.x = touch.clientX * scaleRatio;
+            this.y = touch.clientY * scaleRatio;
 
             const onTouchMove = (e: TouchEvent) => {
                 const touch = e.touches[0];
-                this.x = touch.clientX;
-                this.y = touch.clientY;
+                this.x = touch.clientX * scaleRatio;
+                this.y = touch.clientY * scaleRatio;
             };
 
             const onTouchEnd = () => {

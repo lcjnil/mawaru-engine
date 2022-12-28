@@ -1,6 +1,7 @@
 export class Config {
     enableDebug = false;
+    screenWidth = window.innerWidth * 2;
+    screenHeight = window.innerHeight * 2;
 
-    width = 414;
-    height = 896;
+    scaleRatio = 2;
 }

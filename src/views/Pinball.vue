@@ -14,27 +14,30 @@ onMounted(() => {
 <template>
     <div class="demo">
         <div ref="container"></div>
-        <!--        <div class="dialog" v-if="state?.state !== PlayState.playing">-->
-        <!--            <button @click="handleStart">开始游戏</button>-->
-        <!--        </div>-->
     </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .demo {
     position: relative;
     display: inline-block;
+    font-size: 0;
 }
-
-.dialog {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+//
+//$size: 92px;
+//$position: $size / 2;
+//$rPosition: $position * -1;
+//
+//.demo::after {
+//    content: '';
+//    position: absolute;
+//    top: 0;
+//    left: 0;
+//    width: 100%;
+//    height: 100%;
+//    background-image: linear-gradient(45deg, #808080 25%, transparent 25%), linear-gradient(-45deg, #808080 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #808080 75%), linear-gradient(-45deg, transparent 75%, #808080 75%);
+//    background-size: $size $size;
+//    background-position: 0 0, 0 $position, $position $rPosition, $rPosition 0px;
+//
+//}
 </style>

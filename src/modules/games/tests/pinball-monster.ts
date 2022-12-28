@@ -49,8 +49,8 @@ export default class PinballWall extends Engine {
 
         const canvas = canvasService.createCanvas({
             name: 'map',
-            width: config.width,
-            height: config.height,
+            width: config.screenWidth,
+            height: config.screenHeight,
             container: this.container,
             isDefault: true,
         });
