@@ -102,7 +102,6 @@ export abstract class Engine {
             return [];
         }
 
-        // TODO: 验证下顺序
         return Object.entries(argsMeta)
             .map(([index, Resource]) => [index, this.getResource(Resource)])
             .sort(([indexA], [indexB]) => indexA - indexB)
@@ -144,7 +143,8 @@ export abstract class Engine {
     currentTickTime = 0;
 
     get deltaTickTime() {
-        return this.currentTickTime - this.lastTickTime;
+        // return this.currentTickTime - this.lastTickTime;
+        return 1000 / 60;
     }
 
     doTick() {

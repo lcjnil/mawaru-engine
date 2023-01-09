@@ -13,7 +13,7 @@ export default defineConfig({
     },
     server: {
         hmr: {
-            clientPort: process.env.IS_LED ? 80 : undefined,
+            clientPort: process.env.IS_LED ? 443 : undefined,
         },
     },
 });

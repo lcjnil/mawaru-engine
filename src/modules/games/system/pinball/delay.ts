@@ -12,7 +12,7 @@ export class DelaySystem {
             const delay = entity.getComponentOrThrow(Delay);
             delay.delay -= this.engine.deltaTickTime;
 
-            if (delay.delay <= 0) {
+            if (delay.delay <= 2 ** -5) {
                 entity.removeComponent(Delay);
             }
         }

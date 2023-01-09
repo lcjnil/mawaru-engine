@@ -20,13 +20,17 @@ export class Entity {
             }
         });
 
-        this.components = components.filter((v) => v);
+        // this.components = components.filter((v) => v);
+        components.forEach((component) => {
+            // @ts-ignore
+            this.componentMap.set(component.constructor, component);
+        });
     }
 
-    components: any[] = [];
+    componentMap: Map<ComponentLike<any>, any> = new Map();
 
     getComponent<T>(constructor: ComponentLike<T>): T | undefined {
-        return this.components.find((item) => item instanceof constructor);
+        return this.componentMap.get(constructor);
     }
 
     getComponentOrThrow<T>(constructor: ComponentLike<T>): T {
@@ -39,20 +43,16 @@ export class Entity {
     }
 
     hasComponent<T>(constructor: ComponentLike<T>): boolean {
-        // TODO: 可以构造一个 map 优化性能
-        return !!this.getComponent(constructor);
+        return this.componentMap.has(constructor);
     }
 
     addComponent<T>(component: T) {
-        this.components.push(component);
+        this.removeComponent(component.constructor);
+        // @ts-ignore
+        this.componentMap.set(component.constructor, component);
     }
 
     removeComponent<T>(constructor: ComponentLike<T>) {
-        const index = this.components.findIndex(
-            (item) => item instanceof constructor
-        );
-        if (index >= 0) {
-            this.components.splice(index, 1);
-        }
+        this.componentMap.delete(constructor);
     }
 }

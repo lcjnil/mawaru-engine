@@ -1,4 +1,4 @@
-const scaleRatio = 414 / window.innerWidth;
+const scaleRatio = window.innerWidth / 414;
 
 export class PinballConfig {
     /**
@@ -16,11 +16,10 @@ export class PinballConfig {
     shootPosition: [number, number] = [0, 0];
 
     ballCount = 5;
-    speed = 500;
+    speed = 800;
 
     // acceleration = -400;
     // minSpeed = 50;
-    delay = 50;
 
     monsterScreenSize = 90 * scaleRatio;
 
@@ -39,4 +38,6 @@ export class PinballConfig {
     horizontalCount = 11;
 
     healthRange = [1, 10] as const;
+
+    delay = (1000 / 60) * 3;
 }

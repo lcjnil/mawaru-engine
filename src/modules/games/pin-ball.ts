@@ -13,21 +13,15 @@ import { StageChecker } from './system/pinball/stage-checker';
 import { PinballConfig } from './resource/pinball/pinballConfig';
 import { Entity } from '../ecs/base/entity';
 import { Line } from './component/pinball/line';
-import { Monster } from './component/pinball/monster';
 import { Obstacle } from './component/pinball/obstacle';
-import { Health } from './component/pinball/health';
 import { Wall } from './component/pinball/wall';
 import { DelaySystem } from './system/pinball/delay';
 import { BackgroundRenderer } from './system/pinball/backgrund-renderer';
 import { Rect } from './component/pinball/rect';
-
-import zodiacImage from './assets/zodiac.png';
-import { ImageRender } from './component/pinball/imageRender';
 import { MonsterSpawnService } from './resource/pinball/monsterSpawn';
+import { MonsterMoveSystem } from './system/pinball/monster-move';
 
-// TODO: monster spawn
-// TODO: sprite renderer
-// TODO: modified collision detection
+// TODO: monster spawn algorithm
 export class PinBallEngine extends Engine {
     constructor(public container: HTMLElement) {
         super();
@@ -42,6 +36,7 @@ export class PinBallEngine extends Engine {
             .addSystem(BackgroundRenderer)
             .addSystem(LineRenderer)
             .addSystem(MoveSystem)
+            .addSystem(MonsterMoveSystem)
             .addSystem(DamageSystem)
             // .addSystem(WallRenderer)
             .addSystem(MonsterRenderer)
@@ -127,37 +122,11 @@ export class PinBallEngine extends Engine {
 
     initMonsters() {
         const pinballConfig = this.getResource(PinballConfig);
-        const image = new Image();
-        image.src = zodiacImage;
+        const monsterSpawnService = this.getResource(MonsterSpawnService);
 
-        function getMonsterRect(x: number, y: number) {
-            return new Rect(
-                pinballConfig.leftRightScreenPadding +
-                    (x - 1) * pinballConfig.monsterScreenSize,
-                (y - 1) * pinballConfig.monsterScreenSize,
-                pinballConfig.monsterScreenSize,
-                pinballConfig.monsterScreenSize
-            );
-        }
-
-        this.addEntity(
-            new Entity(
-                new Monster(),
-                new Obstacle(),
-                getMonsterRect(2, 2),
-                new Health(1),
-                new ImageRender(image, 1.3)
-            )
-        );
-        this.addEntity(
-            new Entity(
-                new Monster(),
-                new Obstacle(),
-                getMonsterRect(3, 2),
-                new Health(10),
-                new ImageRender(image, 1.3)
-            )
-        );
+        monsterSpawnService.spawnLineMonster().forEach((entity) => {
+            this.addEntity(entity);
+        });
     }
 
     initCanvas() {

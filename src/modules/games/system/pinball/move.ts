@@ -8,6 +8,7 @@ import { Delay } from '../../resource/pinball/delay';
 import { Config } from '../../resource/config';
 import { Rect } from '../../component/pinball/rect';
 import { Position } from '../../component/pinball/position';
+import { Monster } from '../../component/pinball/monster';
 
 @System
 export class MoveSystem {
@@ -40,6 +41,13 @@ export class MoveSystem {
             position.y += dy;
 
             for (const obstacle of obstacles) {
+                // if (
+                //     obstacle.getComponent(Monster) &&
+                //     !obstacle.getComponent(Health)
+                // ) {
+                //     continue;
+                // }
+
                 const isHit = this.isHit(
                     position,
                     speed,

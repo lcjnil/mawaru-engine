@@ -6,6 +6,8 @@ import { ImageRender } from '../../component/pinball/imageRender';
 import { Config } from '../../resource/config';
 import { PinballConfig } from '../../resource/pinball/pinballConfig';
 import { Health } from '../../component/pinball/health';
+import { SpriteRenderer } from '../../component/pinball/spriteRenderer';
+import { MonsterSpawnService } from '../../resource/pinball/monsterSpawn';
 
 @System
 export class MonsterRenderer {
@@ -14,7 +16,8 @@ export class MonsterRenderer {
     run(
         @Resource(CanvasService) canvasService: CanvasService,
         @Resource(Config) config: Config,
-        @Resource(PinballConfig) pinballConfig: PinballConfig
+        @Resource(PinballConfig) pinballConfig: PinballConfig,
+        @Resource(MonsterSpawnService) monsterSpawnService: MonsterSpawnService
     ) {
         const ctx = canvasService.defaultLayer;
         const monsters = this.engine.queryEntities(Monster, Rect);
@@ -22,6 +25,7 @@ export class MonsterRenderer {
         for (const monster of monsters) {
             const rect = monster.getComponentOrThrow(Rect);
             const imageRender = monster.getComponent(ImageRender);
+            let spriteRender = monster.getComponent(SpriteRenderer);
             const health = monster.getComponent(Health);
 
             if (imageRender) {
@@ -39,8 +43,57 @@ export class MonsterRenderer {
                 );
             }
 
+            if (spriteRender) {
+                if (!spriteRender.startTime) {
+                    spriteRender.startTime = this.engine.currentTickTime;
+                }
+
+                let frame = Math.floor(
+                    (this.engine.currentTickTime - spriteRender.startTime) /
+                        (1000 / spriteRender.config.fps)
+                );
+
+                if (
+                    !spriteRender.config.loop &&
+                    frame > spriteRender.config.totalCount
+                ) {
+                    // if (!monster.getComponent(Health)) {
+                    //     this.engine.removeEntity(monster);
+                    //     continue;
+                    // }
+
+                    monster.removeComponent(SpriteRenderer);
+                    spriteRender = monsterSpawnService.getIdleComponent();
+                    monster.addComponent(spriteRender);
+                    frame = 0;
+                }
+                frame = frame % spriteRender.config.totalCount;
+
+                const x = Math.floor(
+                    frame / spriteRender.config.horizontalCount
+                );
+                const y = frame % spriteRender.config.horizontalCount;
+
+                ctx.drawImage(
+                    spriteRender.img,
+                    x * spriteRender.config.width,
+                    y * spriteRender.config.height,
+                    spriteRender.config.width,
+                    spriteRender.config.height,
+                    rect.x -
+                        (rect.width * spriteRender.config.scale - rect.width) /
+                            2,
+                    rect.y -
+                        (rect.height * spriteRender.config.scale -
+                            rect.height) /
+                            2 +
+                        (spriteRender.config.offset ?? 0),
+                    rect.width * spriteRender.config.scale,
+                    rect.height * spriteRender.config.scale
+                );
+            }
+
             if (health) {
-                // 渲染一个血量的数字，在怪物的右下角，并且有红色圆背景
                 ctx.fillStyle = '#000';
                 ctx.beginPath();
                 ctx.arc(

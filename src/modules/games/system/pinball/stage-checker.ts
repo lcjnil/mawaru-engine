@@ -11,6 +11,7 @@ import { Delay } from '../../resource/pinball/delay';
 import { Monster } from '../../component/pinball/monster';
 import { MonsterSpawnService } from '../../resource/pinball/monsterSpawn';
 import { Rect } from '../../component/pinball/rect';
+import { MonsterMove } from '../../component/pinball/monsterMove';
 
 // TODO: 判断游戏结束
 @System
@@ -47,10 +48,10 @@ export class StageChecker {
                     );
                 }
 
-                pinballState.state = 'move';
+                pinballState.state = 'pinball-move';
                 lineComponent.reset();
             }
-        } else if (pinballState.state === 'move') {
+        } else if (pinballState.state === 'pinball-move') {
             const balls = this.engine.queryEntities(Pinball);
             if (balls.length) {
                 return;
@@ -59,14 +60,25 @@ export class StageChecker {
             const monsters = this.engine.queryEntities(Monster, Rect);
             for (const monster of monsters) {
                 const rect = monster.getComponentOrThrow(Rect);
-                rect.y += rect.height;
+                monster.addComponent(
+                    new MonsterMove(200, rect.y + rect.height)
+                );
+                monster.addComponent(monsterSpawnService.getWalkComponent());
             }
 
-            monsterSpawnService
-                .spawnLineMonster()
-                .forEach((entity) => this.engine.addEntity(entity));
-
-            pinballState.state = 'shoot';
+            pinballState.state = 'monster-move';
+        } else if (pinballState.state === 'monster-move') {
+            const monsters = this.engine.queryEntities(
+                Monster,
+                Rect,
+                MonsterMove
+            );
+            if (!monsters.length) {
+                pinballState.state = 'shoot';
+                monsterSpawnService
+                    .spawnLineMonster()
+                    .forEach((entity) => this.engine.addEntity(entity));
+            }
         }
     }
 }
