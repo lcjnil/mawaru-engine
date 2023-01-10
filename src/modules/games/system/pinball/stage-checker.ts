@@ -49,7 +49,6 @@ export class StageChecker {
                 }
 
                 pinballState.state = 'pinball-move';
-                lineComponent.reset();
             }
         } else if (pinballState.state === 'pinball-move') {
             const balls = this.engine.queryEntities(Pinball);
@@ -79,6 +78,13 @@ export class StageChecker {
                     .spawnLineMonster()
                     .forEach((entity) => this.engine.addEntity(entity));
             }
+            const line = this.engine.queryEntities(Line)[0];
+            if (!line) {
+                return;
+            }
+
+            const lineComponent = line.getComponentOrThrow(Line);
+            lineComponent.reset();
         }
     }
 }

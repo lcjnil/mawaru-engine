@@ -34,13 +34,13 @@ export class PinBallEngine extends Engine {
         // NOTE: 现在 system 比较多，可能需要根据 stage 来切换 活跃的 system
         this.addSystem(DelaySystem)
             .addSystem(BackgroundRenderer)
-            .addSystem(LineRenderer)
             .addSystem(MoveSystem)
             .addSystem(MonsterMoveSystem)
             .addSystem(DamageSystem)
             // .addSystem(WallRenderer)
             .addSystem(MonsterRenderer)
             .addSystem(PinballRenderer)
+            .addSystem(LineRenderer)
             .addSystem(StageChecker);
     }
 

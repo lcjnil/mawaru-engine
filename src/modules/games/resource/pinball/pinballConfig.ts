@@ -6,8 +6,6 @@ export class PinballConfig {
      */
     blockSize = 40;
 
-    monsterCount = 10;
-
     /**
      * 弹珠的半径
      */
@@ -16,7 +14,7 @@ export class PinballConfig {
     shootPosition: [number, number] = [0, 0];
 
     ballCount = 5;
-    speed = 800;
+    speed = 1500;
 
     // acceleration = -400;
     // minSpeed = 50;
